@@ -2,7 +2,7 @@ enchant();
 window.onload = function(){
 	var game = new Game(1000 , 1000);
 	
-	game.preload('img/title1000-1000.png','img/player.png','img/tama.png');
+	game.preload('img/title1000-1000.png','img/player.png','img/tama.png','img/enemy.png');
 
 	game.onload = function(){
 		// タイトル画面シーン
@@ -31,17 +31,21 @@ window.onload = function(){
 		});
 		novel.addChild(label);
 
-		//---シューティングっぽい奴---		
+		/*** シューティングっぽい奴 ***/
+		// スコア変数
+		var shotNum = 0; // 攻撃数
+		var score = 0; // スコア
+		
 		// 攻撃ボタンのバインド
 		game.keybind('Z'.charCodeAt(0),'a');
-		// 攻撃中かどうかのフラグ
-		var sFlag = false;
+
 
 		// --プレイヤー--
 		//　自分の位置
 		var player = new Sprite(100,100);
 		player.x = 500; player.y = 900;
-		player.image = game.assets['img/player.png'];
+		player.image = game.assets['img/player.png'];	
+		var sFlag = false;	// 攻撃中かどうかのフラグ
 		shooting.addChild(player);
 
 		// --自分の玉--
@@ -49,6 +53,13 @@ window.onload = function(){
 		tama.x = 0; tama.y = 0;
 		tama.image = game.assets['img/tama.png'];
 		
+		// --敵--
+		var enemy = new Sprite(100,100);
+		enemy.x = 10; enemy.y = 500;
+		enemy.image = game.assets['img/enemy.png'];
+		var esFlag = false;	// 攻撃中のフラグ
+		shooting.addChild(enemy);
+
 		// プレイヤーのイベント
 		player.addEventListener('enterframe' , function(){
 			if(game.input.left){
@@ -64,6 +75,17 @@ window.onload = function(){
 					tama.y = player.y;
 					shooting.addChild(tama);
 					sFlag = true;
+			}
+		});
+
+		// 敵のイベント
+		enemy.addEventListener('enterframe' , function(){
+			var movement = [-50,-20,0,20,50];
+			enemy.x += movement[ Math.floor(Math.random() * movement.length) ];
+			if(enemy.x < 0) enemy.x = 0;
+			if(enemy.x > 1000) enemy.x = 1000;
+			if(!esFlag){
+				esFlag = true;
 			}
 		});
 
