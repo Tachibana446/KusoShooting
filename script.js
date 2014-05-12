@@ -25,20 +25,21 @@ window.onload = function(){
 		});
 		
 		/*** 文字も出せる ***/
-		// クリック領域
-		var novelBg = new Sprite(1000,1000);
-		novelBg.image = new Surface(1000,1000);
-		novelBg.addEventListener('touched',function(){
-			game.popScene();
-			game.pushScene();
-		});
-		novel.addChild(novelBg);
+
 		// なんかラベル
 		var label = new Label("超駅再ティんな３Dアクションクソゲー");
+		var n = 0;
 		label.x = 50; label.y = 500; label.height = 900; label.width = 900; label.font = "48px meiryo";
 		label.addEventListener('touchend', function(){
 			game.popScene();
 			game.pushScene(shooting);
+		});
+		label.addEventListener('enterframe',function(){
+			n += 1;
+			if( n > 60){
+				game.popScene();
+				game.pushScene(shooting);
+			}
 		});
 		novel.addChild(label);
 
@@ -120,7 +121,7 @@ window.onload = function(){
 
 		// 弾のイベント
 		tama.addEventListener('enterframe' , function(){
-			tama.y -= 40;
+			tama.y -= 30;
 			if(tama.y < 0){
 				shooting.removeChild(tama);
 				sFlag = false;
@@ -136,11 +137,12 @@ window.onload = function(){
 	
 		/*** リザルト ***/
 		resultLabel = new Label();
-		resultLabel.text = "あなたは"+shootNum+"で敵を倒しました。\nｳｰﾜﾔｯﾀｧｧｧｧｱｱｱｱ\n"
+		resultLabel.text = "あなたは"+String(shootNum)+"ｼｭｰｯ!で敵を倒しました。\nｳｰﾜﾔｯﾀｧｧｧｧｱｱｱｱ\n"
 							+"スコア: "+ score;
-		resultLabel.font = "32px meiryo";
+		resultLabel.font = "28px meiryo";
 		resultLabel.x = 20; 
 		resultLabel.y = 20;
+		resultLabel.height = 1000;
 		result.addChild(resultLabel);
 
 		// ゲームの開始
