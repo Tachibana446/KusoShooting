@@ -1,8 +1,28 @@
 enchant();
 window.onload = function(){
+	// ゲーム本体のオブジェクト
 	var game = new Game(1000 , 1000);
 	
-	game.preload('img/title1000-1000.png','img/player.png','img/tama.png','img/enemy.png');
+	// ファイル名
+	var imgDir = 'img-iphone5/';
+	var fileName = {
+		title : 'title.png'	 ,
+		player : 'player.png',
+		enemy : 'enemy.png'	 ,
+		bullet : 'bullet.png'
+	};
+	
+	// 画像のプリロード
+	for(var i in fileName){
+		fileName[i] = imgDir + fileName[i];
+		game.preload( fileName[i] );
+	}
+	
+	// 画面サイズ
+	var W = 1136;
+	var H = 640;
+	// 自機などの正方形のサイズ
+	var L = 96;
 
 	game.onload = function(){
 		// タイトル画面シーン
@@ -15,8 +35,8 @@ window.onload = function(){
 		var result = new Scene();	
 
 		// タイトル画面のスプライト
-		var titleSprite = new Sprite(1000,1000);
-		titleSprite.image = game.assets['img/title1000-1000.png'];
+		var titleSprite = new Sprite(W,H);
+		titleSprite.image = game.assets[ fileName['title'] ];
 		title.addChild(titleSprite);
 		// タイトル画面のスプライトのイベント
 		titleSprite.addEventListener('touchend',function(){
@@ -51,28 +71,28 @@ window.onload = function(){
 		// 攻撃ボタンのバインド
 		game.keybind('Z'.charCodeAt(0),'a');
 		// FPS
-		game.fps = 30;
+		game.fps = 15;
 		// スケール
-		game.scale = 1/2;
+		game.scale = 1;
 
 		// --プレイヤー--
 		//　自分の位置
-		var player = new Sprite(100,100);
-		player.x = 500; player.y = 900;
-		player.image = game.assets['img/player.png'];	
+		var player = new Sprite(L,L);
+		player.x = W / 2; player.y = H - L;
+		player.image = game.assets[ fileName['player'] ];	
 		var sFlag = false;	// 攻撃中かどうかのフラグ
 		shooting.addChild(player);
 
-		// --自分の玉--
-		var tama = new Sprite(50,50);
-		tama.x = 0; tama.y = 0;
-		tama.image = game.assets['img/tama.png'];
-		var tamaAtk = 10;	// 攻撃力	
+		// --自分の弾--
+		var bullet = new Sprite(L,L);
+		bullet.x = 0; bullet.y = 0;
+		bullet.image = game.assets[ fileName['bullet'] ];
+		var bulletAtk = 10;	// 攻撃力	
 
 		// --敵--
-		var enemy = new Sprite(100,100);
-		enemy.x = 10; enemy.y = 500;
-		enemy.image = game.assets['img/enemy.png'];
+		var enemy = new Sprite(L,L);
+		enemy.x = L; enemy.y = 0;
+		enemy.image = game.assets[ fileName['enemy'] ];
 		var esFlag = false;	// 攻撃中のフラグ
 		var eHP = 100;		// ライフ
 		shooting.addChild(enemy);
@@ -91,12 +111,12 @@ window.onload = function(){
 			}
 			if(game.input.right){
 				player.x += 50;
-				if(player.x > 1000) player.x = 1000;
+				if(player.x > W - L ) player.x = W - L;
 			}
 			if(game.input.a && !sFlag){
-					tama.x = player.x;
-					tama.y = player.y;
-					shooting.addChild(tama);
+					bullet.x = player.x;
+					bullet.y = player.y;
+					shooting.addChild(bullet);
 					sFlag = true;
 					shootNum += 1;
 			}
@@ -108,7 +128,7 @@ window.onload = function(){
 			var movement = [-50,-20,0,0,0,20,50];
 			enemy.x += movement[ Math.floor(Math.random() * movement.length) ];
 			if(enemy.x < 0) enemy.x = 0;
-			if(enemy.x > 1000) enemy.x = 1000;
+			if(enemy.x > W - L) enemy.x = W - L;
 			if(!esFlag){
 				esFlag = true;
 			}
@@ -120,17 +140,17 @@ window.onload = function(){
 		});
 
 		// 弾のイベント
-		tama.addEventListener('enterframe' , function(){
-			tama.y -= 30;
-			if(tama.y < 0){
-				shooting.removeChild(tama);
+		bullet.addEventListener('enterframe' , function(){
+			bullet.y -= 30;
+			if(bullet.y < 0){
+				shooting.removeChild(bullet);
 				sFlag = false;
 			}
 			// 衝突判定
-			if(tama.intersect(enemy)){
+			if(bullet.intersect(enemy)){
 				console.log("hit!",eHP);
-				eHP -= tamaAtk;
-				shooting.removeChild(tama);
+				eHP -= bulletAtk;
+				shooting.removeChild(bullet);
 				sFlag = false;
 			}
 		});
