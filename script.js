@@ -56,7 +56,7 @@ window.onload = function(){
 		});
 		label.addEventListener('enterframe',function(){
 			n += 1;
-			if( n > 60){
+			if( n > 30){
 				game.popScene();
 				game.pushScene(shooting);
 			}
@@ -68,6 +68,11 @@ window.onload = function(){
 		var shootNum = 0; // 攻撃数
 		var score = 0; // スコア
 		
+		// 仮想パッド
+		var pad = new Pad();
+		pad.moveTo(0,H - 100);
+		shooting.addChild(pad);
+
 		// 攻撃ボタンのバインド
 		game.keybind('Z'.charCodeAt(0),'a');
 		// FPS
