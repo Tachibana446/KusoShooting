@@ -115,6 +115,7 @@ window.onload = function(){
 			if(eHP < 0){
 				score = 110 - shootNum;
 				game.popScene();
+				eHP = 100;
 				game.pushScene(result);
 			}
 		});
@@ -143,6 +144,14 @@ window.onload = function(){
 		resultLabel.x = 20; 
 		resultLabel.y = 20;
 		resultLabel.height = 1000;
+		resultLabel.addEventListener('enterframe',function(){
+			n += 1;
+			if( n > 90){
+				n = 0;
+				game.popScene();
+				game.pushScene(title);	// 終わったらタイトルに戻る
+			}
+		});
 		result.addChild(resultLabel);
 
 		// ゲームの開始
